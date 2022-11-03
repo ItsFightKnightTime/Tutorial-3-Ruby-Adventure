@@ -105,6 +105,8 @@ MonoBehaviour:
   timeInvincible: 2
   projectilePrefab: {fileID: 2776926198193011187, guid: a4956766cfb129641a12a39cd3471a78, type: 3}
   speed: 5
+  throwSound: {fileID: 8300000, guid: 5dcc58b0b5f03b046a38211dc0962a8e, type: 3}
+  hitSound: {fileID: 8300000, guid: 19cb85f0a8673c744b0148bf20c4389f, type: 3}
 --- !u!50 &8713108652445233725
 Rigidbody2D:
   serializedVersion: 4

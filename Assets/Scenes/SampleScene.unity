@@ -18599,7 +18599,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -20617,14 +20617,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ruby
       objectReference: {fileID: 0}
-    - target: {fileID: 3642116426070309409, guid: 3a7a00719b0681a439eaa6c60b31eebb, type: 3}
-      propertyPath: hitSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 19cb85f0a8673c744b0148bf20c4389f, type: 3}
-    - target: {fileID: 3642116426070309409, guid: 3a7a00719b0681a439eaa6c60b31eebb, type: 3}
-      propertyPath: throwSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 5dcc58b0b5f03b046a38211dc0962a8e, type: 3}
     - target: {fileID: 3642116426070309423, guid: 3a7a00719b0681a439eaa6c60b31eebb, type: 3}
       propertyPath: m_RootOrder
       value: 1
