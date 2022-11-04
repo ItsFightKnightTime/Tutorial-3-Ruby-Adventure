@@ -124,6 +124,8 @@ public class RubyController : MonoBehaviour
             invincibleTimer = timeInvincible;
 
             PlaySound(hitSound);
+
+            animator.SetTrigger("Hit");
         }
 
         // Health math code
