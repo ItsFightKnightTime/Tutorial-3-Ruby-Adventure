@@ -100,6 +100,12 @@ public class RubyController : MonoBehaviour
                 }
             }
         }
+
+        // Close Game
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     void FixedUpdate()
