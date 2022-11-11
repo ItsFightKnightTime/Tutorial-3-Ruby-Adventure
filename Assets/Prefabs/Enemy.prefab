@@ -150,10 +150,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
-  vertical: 0
+  vertical: 1
   changeTime: 3
   smokeEffect: {fileID: 4554583915703803485}
-  WinTextObject: {fileID: 0}
+  fixedSound: {fileID: 8300000, guid: d197c7efe336a31428f3399828887ae7, type: 3}
+  brokenSound: {fileID: 8300000, guid: c0fd9ed4c37722e40844750ed8d8a01e, type: 3}
 --- !u!95 &4685373862780064492
 Animator:
   serializedVersion: 4
@@ -184,7 +185,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c0fd9ed4c37722e40844750ed8d8a01e, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

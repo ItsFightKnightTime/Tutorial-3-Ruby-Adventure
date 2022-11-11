@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class HardEnemyController : MonoBehaviour
 {
     public float speed = 3.0f;
     public bool vertical; // Used to set if robot is moving veritcally
@@ -108,7 +108,7 @@ public class EnemyController : MonoBehaviour
 
         if (player != null)
         {
-            player.ChangeHealth(-1);
+            player.ChangeHealth(-2); // Changes health of player
         }
     }
 

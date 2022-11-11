@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthCollectible : MonoBehaviour
+public class AmmoCollectible : MonoBehaviour
 {
     public AudioClip collectedClip;
 
@@ -12,9 +12,10 @@ public class HealthCollectible : MonoBehaviour
 
         if (controller != null)
         {
-            if(controller.health  < controller.maxHealth)
+            if(controller.ammo <= controller.currentAmmo)
             {
-                controller.ChangeHealth(1);
+                controller.ChangeAmmo(4); // Adds 4 ammo
+                controller.AmmoText(); // Changes Ammo UI
                 Destroy(gameObject);
 
                 controller.PlaySound(collectedClip);

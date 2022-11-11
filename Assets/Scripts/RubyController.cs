@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RubyController : MonoBehaviour
 {
@@ -14,8 +16,13 @@ public class RubyController : MonoBehaviour
     bool isInvincible;
     float invincibleTimer;
 
-    // Cog Bullet
+    // Cog Object and Ammo Variables
     public GameObject projectilePrefab;
+    public int ammo { get { return currentAmmo; }}
+    public int currentAmmo;
+
+    // Ammo Text UI
+    public TextMeshProUGUI ammoText;
 
     // Ruby Variables
     Rigidbody2D rigidbody2d;
@@ -32,6 +39,22 @@ public class RubyController : MonoBehaviour
 
     public AudioClip throwSound;
     public AudioClip hitSound;
+    public AudioSource backgroundManager;
+
+
+    // Health and Damage Particles
+    public ParticleSystem healthEffect;
+    public ParticleSystem damageEffect;
+
+    // Fixed Robots TMP Integers
+    public TextMeshProUGUI fixedText;
+    private int scoreFixed = 0;
+
+    // Win text and Lose Text and Restart bool
+    public GameObject WinTextObject;
+    public GameObject LoseTextObject;
+    bool gameOver;
+
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +73,19 @@ public class RubyController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         // Audio Component
-        audioSource= GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+
+        // Ammo at start
+        rigidbody2d = GetComponent<Rigidbody2D>();
+        AmmoText();
+
+        // Fixed Robot Text
+        fixedText.text = "Fixed Robots: " + scoreFixed.ToString() + "/4";
+
+        // Win Text and Lose text set to false, as well as restart bool
+        WinTextObject.SetActive(false);
+        LoseTextObject.SetActive(false);
+        gameOver = false;
     }
 
     // Update is called once per frame
@@ -81,10 +116,16 @@ public class RubyController : MonoBehaviour
                 isInvincible = false;
         }
 
-        // Cog Bullet
+        // Cog Bullet is launched - Ammo in UI is reduced
         if(Input.GetKeyDown(KeyCode.C))
         {
             Launch();
+            
+            if (currentAmmo > 0)
+            {
+                ChangeAmmo(-1);
+                AmmoText();
+            }
         }
 
         // Talking to NPC
@@ -99,6 +140,11 @@ public class RubyController : MonoBehaviour
                     character.DisplayDialog();
                 }
             }
+
+            if (scoreFixed >= 4)
+            {
+                // SceneManager.LoadScene("Whatever the name of scene two is!);
+            }
         }
 
         // Close Game
@@ -106,11 +152,23 @@ public class RubyController : MonoBehaviour
         {
             Application.Quit();
         }
+
+        // Restart game
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (gameOver == true)
+
+            {
+
+              SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // this loads the currently active scene
+
+            }
+        }
     }
 
     void FixedUpdate()
     {
-        // Movement Code (Adjust Speed HERE)
+        // Movement Code (Speed Value can be changed in Unity)
         Vector2 position = rigidbody2d.position;
         position.x = position.x + speed * horizontal * Time.deltaTime;
         position.y = position.y + speed * vertical * Time.deltaTime;
@@ -132,6 +190,33 @@ public class RubyController : MonoBehaviour
             PlaySound(hitSound);
 
             animator.SetTrigger("Hit");
+
+            // Damage Particle effect
+            damageEffect = Instantiate(damageEffect, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+        }
+
+        // When Ruby Gains Health - Particles appear (Bugged right now)
+        if (amount < 0)
+        {
+            healthEffect = Instantiate(healthEffect, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+        }
+
+        // Ruby loses all health, lose text appears and restart becomes true
+        if (currentHealth <= 1)
+        {
+            LoseTextObject.SetActive(true);
+
+            transform.position = new Vector3(-5f, 0f, -100f);
+            speed = 0;
+            Destroy(gameObject.GetComponent<SpriteRenderer>());
+
+            gameOver = true;
+
+            // BackgroundMusicManager is turned off
+            backgroundManager.Stop();
+
+            // Calls sound script and plays lose sound
+            SoundManagerScript.PlaySound("GameOver");
         }
 
         // Health math code
@@ -141,22 +226,63 @@ public class RubyController : MonoBehaviour
         UIHealthBar.instance.SetValue(currentHealth / (float)maxHealth);
     }
 
+    // Ammo Function
+    public void ChangeAmmo(int amount)
+    {
+        // Ammo math code
+        currentAmmo = Mathf.Abs(currentAmmo + amount);
+        Debug.Log("Ammo: " + currentAmmo);
+    }
+
+    public void AmmoText()
+    {
+        ammoText.text = "Ammo: " + currentAmmo.ToString();
+    }
+
     // Projectile Code
     void Launch()
     {
-        GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+        if (currentAmmo > 0) // If player has ammo, they can launch cogs
+        {
+            GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
 
-        Projectile projectile = projectileObject.GetComponent<Projectile>();
-        projectile.Launch(lookDirection, 300);
+            Projectile projectile = projectileObject.GetComponent<Projectile>();
+            projectile.Launch(lookDirection, 300);
 
-        animator.SetTrigger("Launch");
+            animator.SetTrigger("Launch");
 
-        PlaySound(throwSound);
+            PlaySound(throwSound);
+        }
     }
 
     // Plays sounds from this script and others
     public void PlaySound(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
+    }
+
+    public void FixedRobots(int amount)
+    {
+        scoreFixed += amount;
+        fixedText.text = "Fixed Robots: " + scoreFixed.ToString() + "/4";
+
+        Debug.Log("Fixed Robots: " + scoreFixed);
+
+        // Win Text Appears
+        if (scoreFixed >= 4)
+        {
+            WinTextObject.SetActive(true);
+
+            transform.position = new Vector3(-5f, 0f, -100f);
+            speed = 0;
+
+            Destroy(gameObject.GetComponent<SpriteRenderer>());
+
+            // BackgroundMusicManager is turned off
+            backgroundManager.Stop();
+
+            // Calls sound script and plays win sound
+            SoundManagerScript.PlaySound("FFWin");
+        }
     }
 }
