@@ -43,7 +43,6 @@ public class RubyController : MonoBehaviour
 
 
     // Health and Damage Particles
-    public ParticleSystem healthEffect;
     public ParticleSystem damageEffect;
 
     // Fixed Robots TMP Integers
@@ -54,6 +53,8 @@ public class RubyController : MonoBehaviour
     public GameObject WinTextObject;
     public GameObject LoseTextObject;
     bool gameOver;
+    bool winGame;
+    public static int level = 1; // Level manager
 
 
     // Start is called before the first frame update
@@ -86,6 +87,7 @@ public class RubyController : MonoBehaviour
         WinTextObject.SetActive(false);
         LoseTextObject.SetActive(false);
         gameOver = false;
+        winGame = false;
     }
 
     // Update is called once per frame
@@ -137,13 +139,17 @@ public class RubyController : MonoBehaviour
                 NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
                 if (character != null)
                 {
-                    character.DisplayDialog();
-                }
-            }
+                    if (scoreFixed >= 4)
+                    {
+                        SceneManager.LoadScene("Level 2");
+                        level = 2;
+                    }
 
-            if (scoreFixed >= 4)
-            {
-                // SceneManager.LoadScene("Whatever the name of scene two is!);
+                    else
+                    {
+                       character.DisplayDialog(); 
+                    }
+                }
             }
         }
 
@@ -157,11 +163,14 @@ public class RubyController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (gameOver == true)
-
             {
+                // this loads the currently active scene
+              SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
 
-              SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // this loads the currently active scene
-
+            if (winGame == true)
+            {
+                SceneManager.LoadScene("Level 1");
             }
         }
     }
@@ -186,23 +195,18 @@ public class RubyController : MonoBehaviour
             
             isInvincible = true;
             invincibleTimer = timeInvincible;
+            
 
             PlaySound(hitSound);
 
             animator.SetTrigger("Hit");
 
-            // Damage Particle effect
+            // Damage Particle effect 
             damageEffect = Instantiate(damageEffect, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
         }
 
-        // When Ruby Gains Health - Particles appear (Bugged right now)
-        if (amount < 0)
-        {
-            healthEffect = Instantiate(healthEffect, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
-        }
-
         // Ruby loses all health, lose text appears and restart becomes true
-        if (currentHealth <= 1)
+        if (currentHealth == 1)
         {
             LoseTextObject.SetActive(true);
 
@@ -268,10 +272,18 @@ public class RubyController : MonoBehaviour
 
         Debug.Log("Fixed Robots: " + scoreFixed);
 
-        // Win Text Appears
-        if (scoreFixed >= 4)
+        // Talk to Jambi to visit stage 2
+        if (scoreFixed == 4 && level == 1)
         {
             WinTextObject.SetActive(true);
+        }
+
+        // Win Text Appears ONLY if on Level 2
+        if (scoreFixed == 4 && level == 2)
+        {
+            WinTextObject.SetActive(true);
+
+            winGame = true;
 
             transform.position = new Vector3(-5f, 0f, -100f);
             speed = 0;
@@ -284,5 +296,6 @@ public class RubyController : MonoBehaviour
             // Calls sound script and plays win sound
             SoundManagerScript.PlaySound("FFWin");
         }
+        
     }
 }
