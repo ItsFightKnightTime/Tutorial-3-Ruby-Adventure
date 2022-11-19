@@ -171,6 +171,7 @@ public class RubyController : MonoBehaviour
             if (winGame == true)
             {
                 SceneManager.LoadScene("Level 1");
+                level = 1;
             }
         }
     }
